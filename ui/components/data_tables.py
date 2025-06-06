@@ -418,10 +418,7 @@ class DataTableView(QTableView):
     
     def _optimize_performance(self):
         """Apply performance optimizations for large datasets"""
-        # Enable uniform row heights for better performance
-        self.setUniformRowHeights(True)
-        
-        # Optimize scrolling
+        # Optimize scrolling (removed setUniformRowHeights for PyQt6 compatibility)
         self.setVerticalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.setHorizontalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
     
@@ -532,54 +529,3 @@ class SearchableTableModel(QSortFilterProxyModel):
         
         # Check if all search terms are found in the row
         return all(term in combined_text for term in search_terms)
-
-
-# Template Usage Example:
-"""
-Here's how to use the data table components:
-
-class MachineConfigWindow(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        
-        # Create models
-        self.station_model = StationTableModel()
-        self.actuator_model = ActuatorTableModel()
-        
-        # Create searchable proxy models
-        self.station_proxy = SearchableTableModel()
-        self.station_proxy.setSourceModel(self.station_model)
-        
-        self.actuator_proxy = SearchableTableModel()
-        self.actuator_proxy.setSourceModel(self.actuator_model)
-        
-        # Create views
-        self.station_table = DataTableView()
-        self.station_table.setModel(self.station_proxy)
-        
-        self.actuator_table = DataTableView()
-        self.actuator_table.setModel(self.actuator_proxy)
-        
-        # Connect signals
-        self.station_table.selectionModel().currentRowChanged.connect(self.on_station_selected)
-        self.station_model.station_selected.connect(self.load_actuators)
-    
-    def load_stations(self, machine_data):
-        stations = list(machine_data.stations.values())
-        self.station_model.set_stations(stations)
-        self.station_table.auto_resize_columns()
-    
-    def on_station_selected(self, current, previous):
-        if current.isValid():
-            # Get station from proxy model
-            source_index = self.station_proxy.mapToSource(current)
-            station = self.station_model.get_station(source_index.row())
-            if station:
-                self.station_model.select_station(station.nb)
-    
-    def load_actuators(self, station_number):
-        station = self.machine_data.get_station(station_number)
-        if station:
-            self.actuator_model.set_actuators(station.actuators, station.name)
-            self.actuator_table.auto_resize_columns()
-"""

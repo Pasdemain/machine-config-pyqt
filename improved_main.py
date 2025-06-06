@@ -71,7 +71,12 @@ class ExcelProcessor(QThread):
                         act_name = row.iloc[1]
                         act_total_track = float(row.iloc[2]) if not pd.isna(row.iloc[2]) else 1.0
                         act_up_numbering = row.iloc[3]
-                        act_tagname = row.iloc[3]
+                        
+                        # Handle tagname properly - check for NaN values
+                        if pd.isna(row.iloc[3]):
+                            act_tagname = ""
+                        else:
+                            act_tagname = str(row.iloc[3])
                         
                         if act_total_track <= 1:
                             station['actuators'].append({
@@ -410,10 +415,17 @@ class MachineConfigWindow(QMainWindow):
             # Update actuators tree with the new 3-column layout
             self.actuators_tree.clear()
             for actuator in station['actuators']:
+                # Convert all values to strings and handle NaN/None values
+                tag_name = actuator.get('act_tagname', '')
+                if pd.isna(tag_name) or tag_name is None:
+                    tag_name = ''
+                else:
+                    tag_name = str(tag_name)
+                
                 act_item = QTreeWidgetItem([
-                    actuator['act_number'],
-                    actuator['act_name'],
-                    actuator.get('act_tagname', '')  # Added the missing tag name column
+                    str(actuator['act_number']),
+                    str(actuator['act_name']),
+                    tag_name
                 ])
                 self.actuators_tree.addTopLevelItem(act_item)
             

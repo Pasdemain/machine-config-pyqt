@@ -60,6 +60,10 @@ class ExcelProcessor(QThread):
                 station['up_num'] = df.iloc[3, 1]
                 station['actuators'] = []
                 
+                # Skip "Free" stations
+                if str(station['name']).lower() == 'free':
+                    continue
+                
                 # Process actuators
                 for _, row in df.iloc[7:-1].iterrows():
                     if not pd.isna(row.iloc[0]):
@@ -81,6 +85,7 @@ class ExcelProcessor(QThread):
                                 station['actuators'].append({
                                     "act_number": t + act_number,
                                     "act_name": act_name,
+                                    "act_tagname": t,  # Use track as tagname for multi-track
                                 })
                 
                 stations[station_number] = station
@@ -204,11 +209,13 @@ class MachineConfigWindow(QMainWindow):
         actuators_layout.addWidget(actuators_label)
         
         self.actuators_tree = QTreeWidget()
-        self.actuators_tree.setHeaderLabels(['Actuator #', 'Actuator Name'])
+        # Added the missing "Tag Name" column
+        self.actuators_tree.setHeaderLabels(['Actuator #', 'Actuator Name', 'Tag Name'])
         
-        # Set column widths
+        # Set column widths for the new 3-column layout
         self.actuators_tree.setColumnWidth(0, 100)
         self.actuators_tree.setColumnWidth(1, 200)
+        self.actuators_tree.setColumnWidth(2, 150)
         
         actuators_layout.addWidget(self.actuators_tree)
         splitter.addWidget(actuators_widget)
@@ -362,7 +369,8 @@ class MachineConfigWindow(QMainWindow):
             self, "Import Successful", 
             f"File processed successfully!\n\n"
             f"• Stations loaded: {station_count}\n"
-            f"• Total actuators: {total_actuators}"
+            f"• Total actuators: {total_actuators}\n"
+            f"• Free stations skipped automatically"
         )
     
     def on_processing_failed(self, error_message):
@@ -399,12 +407,13 @@ class MachineConfigWindow(QMainWindow):
         """Handle station selection"""
         station = item.data(0, Qt.ItemDataRole.UserRole)
         if station:
-            # Update actuators tree
+            # Update actuators tree with the new 3-column layout
             self.actuators_tree.clear()
             for actuator in station['actuators']:
                 act_item = QTreeWidgetItem([
                     actuator['act_number'],
-                    actuator['act_name']
+                    actuator['act_name'],
+                    actuator.get('act_tagname', '')  # Added the missing tag name column
                 ])
                 self.actuators_tree.addTopLevelItem(act_item)
             

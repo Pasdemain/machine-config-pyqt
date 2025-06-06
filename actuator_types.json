@@ -1,0 +1,37 @@
+{
+  "Pneumatic Cylinder": {
+    "description": "Standard pneumatic cylinder actuator",
+    "category": "Pneumatic",
+    "common_uses": ["Linear motion", "Clamping", "Pushing/Pulling"]
+  },
+  "Electric Motor": {
+    "description": "Standard electric motor",
+    "category": "Electric", 
+    "common_uses": ["Rotation", "Conveyor drive", "Spindle drive"]
+  },
+  "Servo Motor": {
+    "description": "Precision servo motor with feedback",
+    "category": "Electric",
+    "common_uses": ["Precise positioning", "Controlled rotation", "Axis movement"]
+  },
+  "Gripper": {
+    "description": "Pneumatic or electric gripper",
+    "category": "End Effector",
+    "common_uses": ["Part gripping", "Material handling", "Assembly"]
+  },
+  "Sensor": {
+    "description": "Various sensor types",
+    "category": "Sensing",
+    "common_uses": ["Position detection", "Presence sensing", "Measurement"]
+  },
+  "Valve": {
+    "description": "Pneumatic or hydraulic valve",
+    "category": "Flow Control",
+    "common_uses": ["Air control", "Fluid control", "Pressure regulation"]
+  },
+  "Custom": {
+    "description": "Custom actuator type",
+    "category": "Other",
+    "common_uses": ["Special applications", "Non-standard actuators"]
+  }
+}
